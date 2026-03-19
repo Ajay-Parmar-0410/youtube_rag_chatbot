@@ -1,4 +1,5 @@
 import { checkRateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
+import { fetchTranscriptFromVercel } from "@/lib/transcript-fetcher";
 
 function isValidVideoId(id: unknown): id is string {
   return typeof id === "string" && /^[\w-]{11}$/.test(id);
@@ -43,11 +44,15 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
+    // Fetch transcript on Vercel (bypasses YouTube cloud IP blocks)
+    const transcript = await fetchTranscriptFromVercel(videoId);
+
     const upstream = await fetch(`${ragServiceUrl}/prefetch`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         video_id: videoId,
+        transcript_text: transcript.fullText,
         ...(typeof language === "string" && language !== "English"
           ? { language }
           : {}),

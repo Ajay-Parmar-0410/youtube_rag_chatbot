@@ -32,7 +32,7 @@ async def prefetch_video(request: PrefetchRequest) -> StreamingResponse:
         )
 
     async def event_stream():
-        async for event in start_prefetch(request.video_id, request.language):
+        async for event in start_prefetch(request.video_id, request.language, request.transcript_text):
             data = json.dumps(event.model_dump(), default=str)
             yield f"data: {data}\n\n"
 

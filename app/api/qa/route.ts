@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { RAG_CONFIG } from "@/lib/constants";
 import { checkRateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
+import { fetchTranscriptFromVercel } from "@/lib/transcript-fetcher";
 import type { ApiResponse, QAResponse } from "@/types/api";
 
 function isValidVideoId(id: unknown): id is string {
@@ -56,6 +57,9 @@ export async function POST(
       );
     }
 
+    // Fetch transcript on Vercel (bypasses YouTube cloud IP blocks)
+    const transcript = await fetchTranscriptFromVercel(videoId);
+
     const response = await fetch(`${ragServiceUrl}/qa`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,6 +67,7 @@ export async function POST(
         video_id: videoId,
         question: (question as string).trim(),
         chat_history: (chatHistory as Array<{role: string; content: string}>) ?? [],
+        transcript_text: transcript.fullText,
         ...(typeof language === "string" && language !== "English" ? { language } : {}),
       }),
     });

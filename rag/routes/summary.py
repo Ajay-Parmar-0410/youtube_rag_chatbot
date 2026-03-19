@@ -38,9 +38,13 @@ async def generate_summary(
     response.headers["X-Cache-Status"] = "miss"
 
     try:
-        transcript = await fetch_transcript(request.video_id)
+        if request.transcript_text:
+            transcript_text = request.transcript_text
+        else:
+            transcript = await fetch_transcript(request.video_id)
+            transcript_text = transcript.full_text
         invoke_input: dict[str, str] = {
-            "transcript": transcript.full_text[:30_000],
+            "transcript": transcript_text[:30_000],
             "language": request.language or "English",
         }
 

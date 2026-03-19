@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchTranscriptFromVercel } from "@/lib/transcript-fetcher";
 import type { ApiResponse, FlashcardResponse } from "@/types/api";
 
 function isValidVideoId(id: unknown): id is string {
@@ -38,12 +39,16 @@ export async function POST(
       );
     }
 
+    // Fetch transcript on Vercel (bypasses YouTube cloud IP blocks)
+    const transcript = await fetchTranscriptFromVercel(videoId);
+
     const response = await fetch(`${ragServiceUrl}/flashcards`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         video_id: videoId,
         count,
+        transcript_text: transcript.fullText,
         ...(typeof language === "string" && language !== "English" ? { language } : {}),
       }),
     });

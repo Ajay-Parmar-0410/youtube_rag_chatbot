@@ -69,6 +69,7 @@ def _get_groq_llm(lightweight: bool = False) -> ChatGroq:
 async def start_prefetch(
     video_id: str,
     language: str | None = None,
+    transcript_text: str | None = None,
 ) -> AsyncGenerator[PrefetchEvent]:
     """Orchestrate prefetching all content for a video.
 
@@ -84,18 +85,21 @@ async def start_prefetch(
     lang_param = language if language and language != "English" else None
     t_start = time.monotonic()
 
-    # --- 1. Transcript (must complete first) ---
+    # --- 1. Transcript (use provided text or fetch) ---
     yield PrefetchEvent(task="transcript", status="started")
-    try:
-        transcript = await fetch_transcript(video_id)
-        elapsed = time.monotonic() - t_start
-        logger.info("Prefetch transcript done in %.1fs", elapsed)
+    if transcript_text:
+        logger.info("Prefetch using provided transcript text")
         yield PrefetchEvent(task="transcript", status="complete")
-    except Exception as exc:
-        yield PrefetchEvent(task="transcript", status="error", error=str(exc))
-        return
-
-    transcript_text = transcript.full_text
+    else:
+        try:
+            transcript = await fetch_transcript(video_id)
+            transcript_text = transcript.full_text
+            elapsed = time.monotonic() - t_start
+            logger.info("Prefetch transcript done in %.1fs", elapsed)
+            yield PrefetchEvent(task="transcript", status="complete")
+        except Exception as exc:
+            yield PrefetchEvent(task="transcript", status="error", error=str(exc))
+            return
 
     # --- 2. Fire ALL tasks in parallel ---
     yield PrefetchEvent(task="brief", status="started")

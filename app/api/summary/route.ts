@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkRateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
+import { fetchTranscriptFromVercel } from "@/lib/transcript-fetcher";
 import type { ApiResponse, SummaryResponse } from "@/types/api";
 
 const VALID_MODES = ["brief", "detailed"] as const;
@@ -50,12 +51,16 @@ export async function POST(
       );
     }
 
+    // Fetch transcript on Vercel (bypasses YouTube cloud IP blocks)
+    const transcript = await fetchTranscriptFromVercel(videoId);
+
     const response = await fetch(`${ragServiceUrl}/summary`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         video_id: videoId,
         mode,
+        transcript_text: transcript.fullText,
         ...(typeof language === "string" && language !== "English" ? { language } : {}),
       }),
     });
@@ -92,7 +97,7 @@ export async function POST(
         success: false,
         error: isConnectionError
           ? "RAG service is not running. Start the Python backend first."
-          : "Internal server error.",
+          : `Internal server error: ${error instanceof Error ? error.message : "unknown"}`,
       },
       { status: isConnectionError ? 503 : 500 },
     );

@@ -28,8 +28,12 @@ async def ask_question(request: QARequest) -> ApiResponse:
         )
 
     try:
-        transcript = await fetch_transcript(request.video_id)
-        store = await get_or_create_store(request.video_id, transcript.full_text)
+        if request.transcript_text:
+            transcript_text = request.transcript_text
+        else:
+            transcript = await fetch_transcript(request.video_id)
+            transcript_text = transcript.full_text
+        store = await get_or_create_store(request.video_id, transcript_text)
         retriever = get_retriever(store)
         chain = create_qa_chain(retriever, language=request.language)
         answer = await chain.ainvoke(request.question)

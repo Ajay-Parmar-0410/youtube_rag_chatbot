@@ -34,6 +34,7 @@ class QARequest(BaseModel, frozen=True):
     question: str = Field(..., min_length=1, max_length=1000)
     chat_history: list[dict[str, str]] = Field(default_factory=list)
     language: str | None = None
+    transcript_text: str | None = None
 
 
 class QAResponse(BaseModel, frozen=True):
@@ -49,6 +50,7 @@ class SummaryRequest(BaseModel, frozen=True):
     video_id: str = Field(..., min_length=1, max_length=20)
     mode: Literal["brief", "detailed"] = "brief"
     language: str | None = None
+    transcript_text: str | None = None
 
 
 class SummaryResponse(BaseModel, frozen=True):
@@ -64,6 +66,7 @@ class FlashcardRequest(BaseModel, frozen=True):
     video_id: str = Field(..., min_length=1, max_length=20)
     count: int = Field(default=10, ge=1, le=30)
     language: str | None = None
+    transcript_text: str | None = None
 
 
 class Flashcard(BaseModel, frozen=True):
@@ -86,6 +89,7 @@ class TopicsRequest(BaseModel, frozen=True):
 
     video_id: str = Field(..., min_length=1, max_length=20)
     language: str | None = None
+    transcript_text: str | None = None
 
 
 class Topic(BaseModel, frozen=True):
@@ -108,6 +112,7 @@ class PrefetchRequest(BaseModel, frozen=True):
 
     video_id: str = Field(..., min_length=1, max_length=20)
     language: str | None = None
+    transcript_text: str | None = None
 
 
 class PrefetchEvent(BaseModel, frozen=True):

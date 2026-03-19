@@ -63,8 +63,11 @@ async def generate_flashcards(request: FlashcardRequest, response: Response) -> 
     response.headers["X-Cache-Status"] = "miss"
 
     try:
-        transcript = await fetch_transcript(request.video_id)
-        transcript_text = transcript.full_text[:MAX_TRANSCRIPT_CHARS]
+        if request.transcript_text:
+            transcript_text = request.transcript_text[:MAX_TRANSCRIPT_CHARS]
+        else:
+            transcript = await fetch_transcript(request.video_id)
+            transcript_text = transcript.full_text[:MAX_TRANSCRIPT_CHARS]
 
         invoke_input = {"transcript": transcript_text, "count": request.count, "language": request.language or "English"}
         try:
