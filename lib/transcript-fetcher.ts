@@ -9,6 +9,63 @@ interface TranscriptResult {
   readonly fullText: string;
 }
 
+interface SupadataSegment {
+  readonly text: string;
+  readonly offset: number;
+  readonly duration: number;
+  readonly lang: string;
+}
+
+interface SupadataResponse {
+  readonly lang: string;
+  readonly content: readonly SupadataSegment[];
+}
+
+/**
+ * Fetch transcript via Supadata's free transcript API.
+ * Works reliably from cloud IPs (Vercel, Railway, AWS, etc.)
+ * because it doesn't scrape YouTube directly.
+ */
+async function fetchViaSupadata(videoId: string): Promise<TranscriptResult> {
+  const apiKey = process.env.SUPADATA_API_KEY;
+  if (!apiKey) {
+    throw new Error("SUPADATA_API_KEY is not configured.");
+  }
+
+  const url = `https://api.supadata.ai/v1/transcript?url=https://youtu.be/${videoId}`;
+  const response = await fetch(url, {
+    headers: { "x-api-key": apiKey },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(
+      `Supadata API returned ${response.status}: ${errorText}`,
+    );
+  }
+
+  const data = (await response.json()) as SupadataResponse;
+
+  if (!data.content || data.content.length === 0) {
+    throw new Error("Supadata returned empty transcript.");
+  }
+
+  const segments: TranscriptSegment[] = data.content
+    .filter((seg) => seg.text.trim().length > 0)
+    .map((seg) => ({
+      text: seg.text.trim(),
+      start: seg.offset / 1000,
+      duration: seg.duration / 1000,
+    }));
+
+  if (segments.length === 0) {
+    throw new Error("Transcript has no text content.");
+  }
+
+  const fullText = segments.map((s) => s.text).join(" ");
+  return { segments, fullText };
+}
+
 interface CaptionTrack {
   baseUrl: string;
   languageCode: string;
@@ -16,12 +73,10 @@ interface CaptionTrack {
 }
 
 /**
- * Fetch transcript using YouTube's Innertube Player API to get caption URLs,
- * then fetch the actual captions. This tends to work from cloud IPs because
- * the Innertube API is the same internal API the YouTube app uses.
+ * Fetch transcript using YouTube's Innertube Player API.
+ * Works for some popular videos from cloud IPs.
  */
 async function fetchViaInnertube(videoId: string): Promise<TranscriptResult> {
-  // Step 1: Get caption track URLs from Innertube Player API
   const playerResponse = await fetch(
     "https://www.youtube.com/youtubei/v1/player?prettyPrint=false",
     {
@@ -59,14 +114,12 @@ async function fetchViaInnertube(videoId: string): Promise<TranscriptResult> {
     throw new Error("No captions available for this video.");
   }
 
-  // Step 2: Pick the best caption track (prefer English, fallback to any available)
   const englishTrack =
     captionTracks.find((t) => t.languageCode === "en" && t.kind !== "asr") ??
     captionTracks.find((t) => t.languageCode === "en") ??
     captionTracks.find((t) => t.kind !== "asr") ??
     captionTracks[0];
 
-  // Step 3: Fetch the actual captions in JSON format
   const captionUrl = new URL(englishTrack.baseUrl);
   captionUrl.searchParams.set("fmt", "json3");
 
@@ -84,7 +137,6 @@ async function fetchViaInnertube(videoId: string): Promise<TranscriptResult> {
   const captionData = await captionResponse.json();
   const events = captionData?.events ?? [];
 
-  // Step 4: Parse into segments
   const segments: TranscriptSegment[] = events
     .filter((e: Record<string, unknown>) => e.segs && typeof e.tStartMs === "number")
     .map((e: Record<string, unknown>) => {
@@ -133,18 +185,26 @@ async function fetchViaYoutubeTranscript(
 
 /**
  * Fetch transcript with fallback chain:
- * 1. Direct Innertube Player API (most likely to work from cloud IPs)
- * 2. youtube-transcript package (scraping fallback)
+ * 1. Supadata API (works from cloud IPs, free tier)
+ * 2. Direct Innertube Player API (works for some popular videos)
+ * 3. youtube-transcript package (scraping fallback)
  */
 export async function fetchTranscriptFromVercel(
   videoId: string,
 ): Promise<TranscriptResult> {
-  // Try Innertube Player API first
+  // Try Supadata API first (most reliable from cloud)
+  try {
+    return await fetchViaSupadata(videoId);
+  } catch (supadataError) {
+    console.warn("Supadata transcript failed, trying Innertube:", supadataError);
+  }
+
+  // Try Innertube Player API
   try {
     return await fetchViaInnertube(videoId);
   } catch (innertubeError) {
     console.warn(
-      "Innertube transcript failed, trying fallback:",
+      "Innertube transcript failed, trying youtube-transcript:",
       innertubeError,
     );
   }
