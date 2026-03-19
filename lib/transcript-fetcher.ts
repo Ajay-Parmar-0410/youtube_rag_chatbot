@@ -59,10 +59,11 @@ async function fetchViaInnertube(videoId: string): Promise<TranscriptResult> {
     throw new Error("No captions available for this video.");
   }
 
-  // Step 2: Pick the best English caption track
+  // Step 2: Pick the best caption track (prefer English, fallback to any available)
   const englishTrack =
     captionTracks.find((t) => t.languageCode === "en" && t.kind !== "asr") ??
     captionTracks.find((t) => t.languageCode === "en") ??
+    captionTracks.find((t) => t.kind !== "asr") ??
     captionTracks[0];
 
   // Step 3: Fetch the actual captions in JSON format
