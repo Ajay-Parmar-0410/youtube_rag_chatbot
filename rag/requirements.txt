@@ -3,6 +3,7 @@ uvicorn[standard]
 langchain
 langchain-community
 langchain-groq
+langchain-google-genai
 langchain-huggingface
 faiss-cpu
 youtube-transcript-api
