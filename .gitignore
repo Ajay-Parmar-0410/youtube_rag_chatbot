@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Next.js
+.next/
+out/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+rag/venv/
+*.egg-info/
+.pytest_cache/
+
+# Vector store
+.faiss_store/
+
+# Environment
+.env
+.env.local
+.env.*.local
+rag/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.coverage
+htmlcov/
+test-results/
+playwright-report/
+
+# Build
+dist/
+build/
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Misc
+*.log
+npm-debug.log*
+
+# Reference clone (not project code)
+everything-claude-code/
