@@ -134,7 +134,7 @@ export default function SharedNotePage() {
 
   if (state.error || !state.note) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+      <div className="fade-in flex min-h-screen items-center justify-center bg-[var(--background)]">
         <div className="mx-4 max-w-md rounded-xl bg-[var(--card)] p-8 text-center shadow-sm ring-1 ring-[var(--card-border)]">
           <h1 className="mb-2 text-lg font-semibold text-[var(--foreground)]">
             Note Not Found
@@ -144,7 +144,7 @@ export default function SharedNotePage() {
           </p>
           <a
             href="/"
-            className="mt-4 inline-block rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            className="btn-press focus-ring mt-4 inline-block rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
           >
             Go Home
           </a>
@@ -161,11 +161,11 @@ export default function SharedNotePage() {
 
   return (
     <VideoPlayerProvider videoId={state.note.video_id}>
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <div className="fade-in mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
         <div className="mb-6">
           <div className="mb-1 flex items-center gap-2">
-            <span className="rounded-full bg-[var(--accent)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--accent)]">
+            <span className="rounded-full bg-[var(--accent-muted)] px-2.5 py-0.5 text-xs font-medium text-[var(--accent)]">
               Shared Note
             </span>
             <span className="text-xs text-[var(--muted-foreground)]">
@@ -197,7 +197,7 @@ export default function SharedNotePage() {
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-[var(--muted-foreground)]">
           This is a read-only shared note.{" "}
-          <a href="/" className="text-[var(--accent)] hover:underline">
+          <a href="/" className="text-[var(--accent)] transition-colors duration-150 hover:underline">
             Create your own notes
           </a>
         </p>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FileText } from "lucide-react";
 
 interface NoteCardProps {
   readonly id: string;
@@ -53,18 +54,19 @@ export default function NoteCard({
   return (
     <Link
       href={`/?v=${videoId}`}
-      className="block rounded-lg border border-zinc-200 p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800/50"
+      className="card-hover focus-ring block rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4 transition-all duration-200 hover:bg-[var(--surface-hover)]"
     >
-      <h3 className="mb-1 font-medium text-zinc-900 dark:text-zinc-100">
+      <h3 className="mb-1 flex items-center gap-1.5 font-medium text-[var(--foreground)]">
+        <FileText size={14} className="shrink-0 text-[var(--muted-foreground)]" />
         {videoTitle ?? videoId}
       </h3>
       <p
         data-testid="note-preview"
-        className="mb-2 text-sm text-zinc-500 dark:text-zinc-400"
+        className="mb-2 text-sm text-[var(--muted-foreground)]"
       >
         {preview}
       </p>
-      <time className="text-xs text-zinc-400 dark:text-zinc-500">
+      <time className="text-xs text-[var(--muted-foreground-2)]">
         {formattedDate}
       </time>
     </Link>

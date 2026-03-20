@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { Camera } from "lucide-react";
 
 interface NotesToolbarProps {
   readonly editor: Editor | null;
@@ -29,9 +30,9 @@ function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`rounded px-2 py-1 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+      className={`focus-ring rounded-lg p-2 text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-40 ${
         isActive
-          ? "bg-[var(--accent)] text-white"
+          ? "bg-[var(--accent-muted)] text-[var(--accent)]"
           : "text-[var(--muted-foreground)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
       }`}
     >
@@ -52,7 +53,7 @@ export default function NotesToolbar({
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         isActive={editor.isActive("bold")}
-        title="Bold (Ctrl+B)"
+        title="Bold"
       >
         <strong>B</strong>
       </ToolbarButton>
@@ -60,12 +61,12 @@ export default function NotesToolbar({
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleItalic().run()}
         isActive={editor.isActive("italic")}
-        title="Italic (Ctrl+I)"
+        title="Italic"
       >
         <em>I</em>
       </ToolbarButton>
 
-      <div className="mx-1 h-4 w-px bg-[var(--card-border)]" />
+      <div className="w-px h-5 bg-[var(--border)]" />
 
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
@@ -78,7 +79,7 @@ export default function NotesToolbar({
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         isActive={editor.isActive("bulletList")}
-        title="Bullet List"
+        title="Bullet list"
       >
         <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path
@@ -92,7 +93,7 @@ export default function NotesToolbar({
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleTaskList().run()}
         isActive={editor.isActive("taskList")}
-        title="Checkbox List"
+        title="Task list"
       >
         <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path
@@ -103,20 +104,14 @@ export default function NotesToolbar({
         </svg>
       </ToolbarButton>
 
-      <div className="mx-1 h-4 w-px bg-[var(--card-border)]" />
+      <div className="w-px h-5 bg-[var(--border)]" />
 
       <ToolbarButton
         onClick={() => onScreenshot?.()}
         disabled={screenshotDisabled}
-        title="Insert Screenshot"
+        title="Screenshot"
       >
-        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            fillRule="evenodd"
-            d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm13.5 3a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM10 14a3 3 0 100-6 3 3 0 000 6z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <Camera size={16} />
       </ToolbarButton>
     </div>
   );

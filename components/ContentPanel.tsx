@@ -18,6 +18,7 @@ import dynamic from "next/dynamic";
 import ChatMessage from "@/components/ChatMessage";
 import LanguageSelector, { useLanguagePreference } from "@/components/LanguageSelector";
 import { usePrefetch, type PrefetchStatus } from "@/lib/prefetch";
+import { MessageCircle, FileText, BookOpen, Captions, Layers, Lightbulb, Send } from "lucide-react";
 
 const FlashcardViewer = dynamic(() => import("@/components/FlashcardViewer"), {
   loading: () => (
@@ -61,6 +62,15 @@ const EMPTY_CACHE: SummaryCache = {
   transcript: null,
 };
 
+const TAB_ICONS: Record<TabMode, React.ReactNode> = {
+  qa: <MessageCircle size={14} />,
+  brief: <FileText size={14} />,
+  detailed: <BookOpen size={14} />,
+  transcript: <Captions size={14} />,
+  flashcards: <Layers size={14} />,
+  topics: <Lightbulb size={14} />,
+};
+
 const TABS: { label: string; value: TabMode }[] = [
   { label: "Q&A", value: "qa" },
   { label: "Brief", value: "brief" },
@@ -68,6 +78,12 @@ const TABS: { label: string; value: TabMode }[] = [
   { label: "Transcript", value: "transcript" },
   { label: "Flashcards", value: "flashcards" },
   { label: "Topics", value: "topics" },
+];
+
+const SUGGESTED_QUESTIONS = [
+  "What is this video about?",
+  "Summarize the key points",
+  "What are the main takeaways?",
 ];
 
 export default function ContentPanel({ videoId }: ContentPanelProps) {
@@ -401,9 +417,9 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
     if (!task) return null;
     const s = prefetchStatus[task];
     if (s === "pending") return "bg-gray-400";
-    if (s === "loading") return "bg-yellow-400 animate-pulse";
-    if (s === "complete") return "bg-green-400";
-    if (s === "error") return "bg-red-400";
+    if (s === "loading") return "bg-yellow-400 animate-pulse ring-2 ring-yellow-400/30";
+    if (s === "complete") return "bg-green-400 ring-2 ring-green-400/20";
+    if (s === "error") return "bg-red-400 ring-2 ring-red-400/20";
     return null;
   };
 
@@ -438,7 +454,7 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
     <div className="flex h-full flex-col rounded-xl bg-[var(--card)] shadow-sm ring-1 ring-[var(--card-border)]">
       {/* Tab bar — horizontally scrollable on mobile */}
       <div className="flex flex-col gap-2 border-b border-[var(--card-border)] px-3 py-2 sm:flex-row sm:items-center sm:px-4">
-        <div className="flex gap-0.5 overflow-x-auto rounded-full bg-[var(--muted)] p-0.5 scrollbar-none">
+        <div className="flex gap-1 overflow-x-auto border-b border-[var(--border)] pb-2 scrollbar-none sm:border-b-0 sm:pb-0">
           {TABS.map((tab) => {
             const dot = getStatusDot(tab.value);
             return (
@@ -446,13 +462,14 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
                 key={tab.value}
                 onClick={() => handleTabSwitch(tab.value)}
                 disabled={isSummaryLoading && tab.value !== "qa"}
-                className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all sm:px-3.5 ${
+                className={`focus-ring shrink-0 rounded-lg px-3.5 py-2 text-xs font-medium transition-all duration-200 ${
                   activeTab === tab.value
-                    ? "bg-[var(--surface)] text-[var(--foreground)] shadow-sm"
-                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                    ? "bg-[var(--accent-muted)] text-[var(--accent)] shadow-sm"
+                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
                 }`}
               >
                 <span className="flex items-center gap-1.5">
+                  {TAB_ICONS[tab.value]}
                   {tab.label}
                   {dot && (
                     <span
@@ -479,20 +496,35 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
         <>
           <div className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.length === 0 && (
-              <p className="text-center text-sm text-[var(--muted-foreground)]">
-                Ask a question about the video...
-              </p>
+              <div className="flex flex-col items-center gap-4 py-8">
+                <MessageCircle size={32} className="text-[var(--muted-foreground)]" />
+                <p className="text-base font-medium text-[var(--foreground)]">
+                  Ask anything about this video
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {SUGGESTED_QUESTIONS.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      onClick={() => setInput(q)}
+                      className="focus-ring rounded-full bg-[var(--card-elevated)] px-4 py-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-all duration-150 cursor-pointer"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
             {messages.map((msg) => (
               <ChatMessage key={msg.id} message={msg} />
             ))}
             {qaLoading && (
               <div className="flex justify-start">
-                <div className="rounded-2xl bg-[var(--muted)] px-4 py-2.5">
+                <div className="rounded-2xl border-l-2 border-[var(--accent)] bg-[var(--muted)] px-4 py-2.5">
                   <div className="flex gap-1">
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--muted-foreground)] [animation-delay:0ms]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--muted-foreground)] [animation-delay:150ms]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--muted-foreground)] [animation-delay:300ms]" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)] [animation-delay:0ms]" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)] [animation-delay:150ms]" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)] [animation-delay:300ms]" />
                   </div>
                 </div>
               </div>
@@ -504,7 +536,7 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
             onSubmit={handleQaSubmit}
             className="border-t border-[var(--card-border)] p-3"
           >
-            <div className="flex gap-2">
+            <div className="flex gap-2 shadow-sm rounded-full">
               <input
                 type="text"
                 value={input}
@@ -512,14 +544,15 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
                 placeholder="Ask a question..."
                 disabled={qaLoading}
                 maxLength={RAG_CONFIG.maxQuestionLength}
-                className="flex-1 rounded-full border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2 text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none transition-all focus:border-[var(--input-focus)] focus:shadow-[0_0_0_1px_var(--input-focus)] disabled:opacity-50"
+                className="focus-ring flex-1 rounded-full border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none transition-all duration-150 focus:border-[var(--input-focus)] focus:shadow-[0_0_0_1px_var(--input-focus)] disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={qaLoading || !input.trim()}
-                className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="btn-press focus-ring rounded-full bg-[var(--accent)] px-4 py-3 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Send message"
               >
-                Send
+                <Send size={18} />
               </button>
             </div>
           </form>
@@ -530,12 +563,12 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
       {(activeTab === "brief" || activeTab === "detailed") && (
         <div className="flex-1 overflow-y-auto p-4">
           {isSummaryLoading && (
-            <div className="animate-pulse space-y-2.5">
-              <div className="h-3.5 w-full rounded-full bg-[var(--muted)]" />
-              <div className="h-3.5 w-5/6 rounded-full bg-[var(--muted)]" />
-              <div className="h-3.5 w-4/6 rounded-full bg-[var(--muted)]" />
-              <div className="h-3.5 w-full rounded-full bg-[var(--muted)]" />
-              <div className="h-3.5 w-3/6 rounded-full bg-[var(--muted)]" />
+            <div className="space-y-2.5">
+              <div className="skeleton-shimmer h-3.5 w-full rounded-full bg-[var(--muted)]" />
+              <div className="skeleton-shimmer h-3.5 w-5/6 rounded-full bg-[var(--muted)]" />
+              <div className="skeleton-shimmer h-3.5 w-4/6 rounded-full bg-[var(--muted)]" />
+              <div className="skeleton-shimmer h-3.5 w-full rounded-full bg-[var(--muted)]" />
+              <div className="skeleton-shimmer h-3.5 w-3/6 rounded-full bg-[var(--muted)]" />
             </div>
           )}
 
@@ -552,7 +585,7 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
                   }));
                   loadSummaryContent(activeTab);
                 }}
-                className="mt-2 text-sm font-medium text-red-600 underline hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                className="focus-ring mt-2 text-sm font-medium text-red-600 underline transition-colors duration-150 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
               >
                 Try again
               </button>
@@ -560,8 +593,10 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
           )}
 
           {currentSummaryContent && !isSummaryLoading && !summaryError && (
-            <div className="prose prose-sm max-w-none text-[var(--foreground)] prose-headings:text-[var(--foreground)] prose-strong:text-[var(--foreground)] prose-p:text-[var(--foreground)] dark:prose-invert">
-              <ReactMarkdown>{currentSummaryContent}</ReactMarkdown>
+            <div className="fade-in">
+              <div className="prose prose-sm max-w-none text-[var(--foreground)] prose-headings:text-[var(--foreground)] prose-strong:text-[var(--foreground)] prose-p:text-[var(--foreground)] prose-p:leading-relaxed dark:prose-invert">
+                <ReactMarkdown>{currentSummaryContent}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
@@ -586,7 +621,7 @@ export default function ContentPanel({ videoId }: ContentPanelProps) {
                   setSummaryCache((prev) => ({ ...prev, transcript: null }));
                   loadSummaryContent("transcript");
                 }}
-                className="mt-2 text-sm font-medium text-red-600 underline hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                className="focus-ring mt-2 text-sm font-medium text-red-600 underline transition-colors duration-150 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
               >
                 Try again
               </button>

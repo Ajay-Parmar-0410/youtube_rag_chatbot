@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { Globe } from "lucide-react";
 
 const LANGUAGES = [
   "English",
@@ -48,17 +49,20 @@ export default function LanguageSelector({
   onChange,
 }: LanguageSelectorProps) {
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value as OutputLanguage)}
-      className="rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-2.5 py-1.5 text-xs font-medium text-[var(--foreground)] outline-none transition-colors focus:border-[var(--input-focus)] focus:shadow-[0_0_0_1px_var(--input-focus)]"
-      aria-label="Output language"
-    >
-      {LANGUAGES.map((lang) => (
-        <option key={lang} value={lang}>
-          {lang}
-        </option>
-      ))}
-    </select>
+    <div className="flex items-center gap-1.5">
+      <Globe size={14} className="text-[var(--muted-foreground)]" />
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as OutputLanguage)}
+        className="focus-ring rounded-lg border border-[var(--border)] bg-[var(--input-bg)] px-2.5 py-1.5 text-xs font-medium text-[var(--foreground)] outline-none transition-colors duration-150 focus:border-[var(--input-focus)] focus:shadow-[0_0_0_1px_var(--input-focus)]"
+        aria-label="Output language"
+      >
+        {LANGUAGES.map((lang) => (
+          <option key={lang} value={lang}>
+            {lang}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

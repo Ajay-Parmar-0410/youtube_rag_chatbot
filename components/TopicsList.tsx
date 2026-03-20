@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { Lightbulb, Clock } from "lucide-react";
 import { fetchTopics } from "@/lib/rag-client";
 import type { Topic } from "@/types/api";
 
@@ -115,13 +116,21 @@ export default function TopicsList({ videoId, onSeek, prefetchedTopics, language
         <button
           onClick={extractTopics}
           disabled={state.isLoading}
-          className="rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
+          className="btn-press focus-ring rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5"
         >
-          {state.isLoading
-            ? "Extracting..."
-            : hasTopics
-              ? "Refresh"
-              : "Extract Topics"}
+          {state.isLoading ? (
+            "Extracting..."
+          ) : hasTopics ? (
+            <>
+              <Lightbulb size={16} />
+              Refresh
+            </>
+          ) : (
+            <>
+              <Lightbulb size={16} />
+              Extract Topics
+            </>
+          )}
         </button>
       </div>
 
@@ -137,13 +146,13 @@ export default function TopicsList({ videoId, onSeek, prefetchedTopics, language
       )}
 
       {state.error && !state.isLoading && (
-        <div className="rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
+        <div className="fade-in rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
           <p className="text-sm text-red-700 dark:text-red-400">
             {state.error}
           </p>
           <button
             onClick={extractTopics}
-            className="mt-2 text-sm font-medium text-red-600 underline hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+            className="focus-ring mt-2 text-sm font-medium text-red-600 underline transition-colors duration-150 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
           >
             Try again
           </button>
@@ -151,7 +160,7 @@ export default function TopicsList({ videoId, onSeek, prefetchedTopics, language
       )}
 
       {!hasTopics && !state.isLoading && !state.error && (
-        <div className="flex h-40 items-center justify-center">
+        <div className="fade-in flex h-40 items-center justify-center">
           <p className="text-sm text-[var(--muted-foreground)]">
             Click &quot;Extract Topics&quot; to identify key topics in the
             video.
@@ -160,13 +169,16 @@ export default function TopicsList({ videoId, onSeek, prefetchedTopics, language
       )}
 
       {hasTopics && !state.isLoading && (
-        <div className="max-h-96 space-y-2 overflow-y-auto">
+        <div className="fade-in stagger-in max-h-96 space-y-2 overflow-y-auto">
           {state.topics.map((topic, idx) => (
             <div
               key={idx}
-              className="rounded-lg bg-[var(--surface)] p-3 ring-1 ring-[var(--card-border)] transition-colors hover:bg-[var(--muted)]"
+              className="card-hover rounded-lg bg-[var(--surface)] p-4 ring-1 ring-[var(--card-border)]"
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-3">
+                <span className="h-6 w-6 shrink-0 rounded-full bg-[var(--accent-muted)] text-[var(--accent)] text-xs font-bold flex items-center justify-center">
+                  {idx + 1}
+                </span>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-semibold text-[var(--foreground)]">
                     {topic.topic}
@@ -174,14 +186,15 @@ export default function TopicsList({ videoId, onSeek, prefetchedTopics, language
                   <p className="mt-0.5 text-xs leading-relaxed text-[var(--muted-foreground)]">
                     {topic.description}
                   </p>
+                  <button
+                    onClick={() => handleTimestampClick(topic.timestamp_start)}
+                    className="focus-ring mt-2 inline-flex items-center gap-1 bg-[var(--accent-muted)] text-[var(--accent)] rounded-full px-2.5 py-1 text-xs font-medium transition-colors duration-150 hover:opacity-80"
+                    title={`Jump to ${formatTimestamp(topic.timestamp_start)}`}
+                  >
+                    <Clock size={12} />
+                    {formatTimestamp(topic.timestamp_start)}
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleTimestampClick(topic.timestamp_start)}
-                  className="shrink-0 rounded-md bg-[var(--accent)]/10 px-2 py-1 text-xs font-mono font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/20"
-                  title={`Jump to ${formatTimestamp(topic.timestamp_start)}`}
-                >
-                  {formatTimestamp(topic.timestamp_start)}
-                </button>
               </div>
             </div>
           ))}

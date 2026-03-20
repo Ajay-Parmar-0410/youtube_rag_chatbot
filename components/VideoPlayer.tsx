@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Play } from "lucide-react";
 import {
   VideoPlayerContext,
   type VideoPlayerAPI,
@@ -170,9 +171,12 @@ interface VideoPlayerProps {
 export default function VideoPlayer({ videoId }: VideoPlayerProps) {
   if (!videoId) {
     return (
-      <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-[var(--muted)]">
+      <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-[var(--card-border)]">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--accent-muted)]">
+          <Play size={48} className="text-[var(--muted-foreground)]" />
+        </div>
         <p className="text-sm text-[var(--muted-foreground)]">
-          Paste a YouTube URL above to watch the video here.
+          Your video will appear here
         </p>
       </div>
     );

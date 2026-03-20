@@ -131,7 +131,7 @@ export default function SummaryView({ videoId }: SummaryViewProps) {
               key={tab.value}
               onClick={() => loadContent(tab.value)}
               disabled={state.isLoading}
-              className={`rounded-full px-3.5 py-1 text-xs font-medium transition-all ${
+              className={`focus-ring rounded-full px-3.5 py-1 text-xs font-medium transition-all duration-150 ${
                 state.mode === tab.value
                   ? "bg-[var(--surface)] text-[var(--foreground)] shadow-sm"
                   : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
@@ -144,12 +144,12 @@ export default function SummaryView({ videoId }: SummaryViewProps) {
       </div>
 
       {state.isLoading && (
-        <div className="animate-pulse space-y-2.5">
-          <div className="h-3.5 w-full rounded-full bg-[var(--muted)]" />
-          <div className="h-3.5 w-5/6 rounded-full bg-[var(--muted)]" />
-          <div className="h-3.5 w-4/6 rounded-full bg-[var(--muted)]" />
-          <div className="h-3.5 w-full rounded-full bg-[var(--muted)]" />
-          <div className="h-3.5 w-3/6 rounded-full bg-[var(--muted)]" />
+        <div className="space-y-2.5">
+          <div className="skeleton-shimmer h-3.5 w-full rounded-full bg-[var(--muted)]" />
+          <div className="skeleton-shimmer h-3.5 w-5/6 rounded-full bg-[var(--muted)]" />
+          <div className="skeleton-shimmer h-3.5 w-4/6 rounded-full bg-[var(--muted)]" />
+          <div className="skeleton-shimmer h-3.5 w-full rounded-full bg-[var(--muted)]" />
+          <div className="skeleton-shimmer h-3.5 w-3/6 rounded-full bg-[var(--muted)]" />
         </div>
       )}
 
@@ -163,7 +163,7 @@ export default function SummaryView({ videoId }: SummaryViewProps) {
               setCache((prev) => ({ ...prev, [state.mode]: null }));
               loadContent(state.mode);
             }}
-            className="mt-2 text-sm font-medium text-red-600 underline hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+            className="focus-ring mt-2 text-sm font-medium text-red-600 underline transition-colors duration-150 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
           >
             Try again
           </button>
@@ -172,7 +172,7 @@ export default function SummaryView({ videoId }: SummaryViewProps) {
 
       {currentContent && !state.isLoading && !state.error && (
         <div
-          className={`prose prose-sm max-w-none text-[var(--foreground)] prose-headings:text-[var(--foreground)] prose-strong:text-[var(--foreground)] prose-p:text-[var(--foreground)] dark:prose-invert ${
+          className={`fade-in prose prose-sm max-w-none text-[var(--foreground)] prose-headings:text-[var(--foreground)] prose-strong:text-[var(--foreground)] prose-p:text-[var(--foreground)] dark:prose-invert ${
             state.mode === "transcript" ? "max-h-96 overflow-y-auto" : ""
           }`}
         >

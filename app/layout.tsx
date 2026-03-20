@@ -26,10 +26,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} min-h-screen bg-[var(--background)] font-sans text-[var(--foreground)] antialiased`}
       >
+        <div className="ambient-glow" aria-hidden="true" />
         <ThemeProvider>
           <AuthProvider>
             <AppHeader />
-            <main>{children}</main>
+            <main className="relative z-10">{children}</main>
           </AuthProvider>
         </ThemeProvider>
       </body>

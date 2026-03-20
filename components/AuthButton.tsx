@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LogIn, LogOut } from "lucide-react";
 
 interface AuthButtonProps {
   readonly user: { readonly email?: string } | null;
@@ -12,23 +13,28 @@ export default function AuthButton({ user, onSignOut }: AuthButtonProps) {
     return (
       <Link
         href="/auth/login"
-        className="rounded-full border border-[var(--accent)] px-4 py-1.5 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/10"
+        className="btn-press focus-ring flex items-center gap-1.5 rounded-full bg-[var(--accent)] px-4 py-1.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
       >
+        <LogIn size={16} />
         Sign in
       </Link>
     );
   }
 
+  const initial = (user.email ?? "U").charAt(0).toUpperCase();
+
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-sm text-[var(--muted-foreground)]">
-        {user.email}
-      </span>
+    <div className="flex items-center gap-2">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-muted)] text-sm font-medium text-[var(--accent)]">
+        {initial}
+      </div>
       <button
         onClick={onSignOut}
-        className="rounded-full bg-[var(--muted)] px-3 py-1.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface-hover)]"
+        title="Sign out"
+        aria-label="Sign out"
+        className="focus-ring rounded-lg p-2 text-[var(--muted-foreground)] transition-colors duration-150 hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
       >
-        Sign out
+        <LogOut size={16} />
       </button>
     </div>
   );

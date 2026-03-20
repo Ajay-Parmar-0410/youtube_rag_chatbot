@@ -12,6 +12,7 @@ import { useVideoPlayer, formatTimestamp } from "@/lib/youtube-player";
 import { Timestamp } from "@/lib/tiptap-timestamp";
 import { exportNotesToPdf } from "@/lib/pdf-export";
 import { fetchVideoTitle } from "@/lib/youtube";
+import { PenLine, Save, FileDown } from "lucide-react";
 import NotesToolbar from "@/components/NotesToolbar";
 
 interface NotesEditorProps {
@@ -339,12 +340,15 @@ export default function NotesEditor({ videoId }: NotesEditorProps) {
   /* ---- Empty state ---- */
   if (!videoId) {
     return (
-      <div className="rounded-xl bg-[var(--card)] p-4 shadow-sm ring-1 ring-[var(--card-border)] lg:h-[calc(100vh-6rem)]">
-        <h2 className="mb-2 text-lg font-semibold text-[var(--foreground)]">
-          Notes
+      <div className="fade-in rounded-xl bg-[var(--card)] p-4 shadow-sm ring-1 ring-[var(--card-border)] lg:h-[calc(100vh-6rem)] flex flex-col items-center justify-center text-center">
+        <div className="h-12 w-12 rounded-full bg-[var(--accent-muted)] flex items-center justify-center mb-3">
+          <PenLine size={20} className="text-[var(--accent)]" />
+        </div>
+        <h2 className="mb-1 text-lg font-semibold text-[var(--foreground)]">
+          Your notes will appear here
         </h2>
         <p className="text-sm text-[var(--muted-foreground)]">
-          Load a video to start taking notes.
+          Load a video and start typing — timestamps are added automatically
         </p>
       </div>
     );
@@ -355,33 +359,37 @@ export default function NotesEditor({ videoId }: NotesEditorProps) {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[var(--card-border)] px-4 py-3">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          <h2 className="flex items-center gap-1.5 text-lg font-semibold text-[var(--foreground)]">
+            <PenLine size={18} />
             Notes
           </h2>
           <SaveStatusBadge status={saveStatus} isLoggedIn={!!user} />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {user && (
             <button
               onClick={handleManualSave}
               disabled={!hasContent || saveStatus === "saving"}
-              className="rounded-full bg-[var(--accent)] px-3.5 py-1 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-press focus-ring flex items-center gap-1.5 rounded-full bg-[var(--accent)] px-3.5 py-1 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
             >
+              <Save size={14} />
               Save
             </button>
           )}
           <button
             onClick={handleExportMd}
             disabled={!hasContent}
-            className="rounded-full bg-[var(--muted)] px-3.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="btn-press focus-ring flex items-center gap-1.5 rounded-full bg-[var(--muted)] px-3.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors duration-150 hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
+            <FileDown size={14} />
             .md
           </button>
           <button
             onClick={handleExportPdf}
             disabled={!hasContent}
-            className="rounded-full bg-[var(--muted)] px-3.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="btn-press focus-ring flex items-center gap-1.5 rounded-full bg-[var(--muted)] px-3.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors duration-150 hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
+            <FileDown size={14} />
             .pdf
           </button>
         </div>

@@ -3,37 +3,53 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f0f0f;
-  --muted: #f2f2f2;
-  --muted-foreground: #606060;
-  --border: #e5e5e5;
-  --accent: #065fd4;
-  --accent-hover: #0550b3;
+  --background: #fafafa;
   --surface: #ffffff;
-  --surface-hover: #f2f2f2;
   --card: #ffffff;
-  --card-border: #e5e5e5;
-  --input-bg: #f2f2f2;
-  --input-border: #d4d4d4;
-  --input-focus: #065fd4;
+  --card-elevated: #ffffff;
+  --foreground: #09090b;
+  --muted-foreground: #71717a;
+  --muted-foreground-2: #a1a1aa;
+  --muted: #f4f4f5;
+  --surface-hover: #f4f4f5;
+  --border: #e4e4e7;
+  --card-border: #e4e4e7;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-muted: rgba(37, 99, 235, 0.08);
+  --input-bg: #f4f4f5;
+  --input-border: #d4d4d8;
+  --input-focus: #2563eb;
+  --success: #16a34a;
+  --warning: #ca8a04;
+  --error: #dc2626;
+  --glow-1: rgba(37, 99, 235, 0.04);
+  --glow-2: rgba(124, 58, 237, 0.03);
 }
 
 .dark {
-  --background: #0f0f0f;
-  --foreground: #f1f1f1;
-  --muted: #272727;
-  --muted-foreground: #aaaaaa;
-  --border: #272727;
-  --accent: #3ea6ff;
-  --accent-hover: #65b8ff;
-  --surface: #0f0f0f;
-  --surface-hover: #272727;
-  --card: #1a1a1a;
-  --card-border: #303030;
-  --input-bg: #272727;
-  --input-border: #3a3a3a;
-  --input-focus: #3ea6ff;
+  --background: #09090b;
+  --surface: #0f1115;
+  --card: #141619;
+  --card-elevated: #1a1d21;
+  --foreground: #fafafa;
+  --muted-foreground: #a1a1aa;
+  --muted-foreground-2: #71717a;
+  --muted: #1e2024;
+  --surface-hover: #1e2024;
+  --border: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-muted: rgba(59, 130, 246, 0.12);
+  --input-bg: #141619;
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-focus: #3b82f6;
+  --success: #22c55e;
+  --warning: #eab308;
+  --error: #ef4444;
+  --glow-1: rgba(59, 130, 246, 0.08);
+  --glow-2: rgba(139, 92, 246, 0.06);
 }
 
 @theme inline {
@@ -51,6 +67,14 @@
   --color-input-bg: var(--input-bg);
   --color-input-border: var(--input-border);
   --color-input-focus: var(--input-focus);
+  --color-card-elevated: var(--card-elevated);
+  --color-accent-muted: var(--accent-muted);
+  --color-glow-1: var(--glow-1);
+  --color-glow-2: var(--glow-2);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-muted-foreground-2: var(--muted-foreground-2);
   --font-sans: var(--font-inter), "Roboto", "Arial", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -81,6 +105,7 @@ body {
   color: var(--muted-foreground);
   pointer-events: none;
   height: 0;
+  font-style: italic;
 }
 
 .ProseMirror h2 {
@@ -148,4 +173,101 @@ body {
 
 .ProseMirror em {
   font-style: italic;
+}
+
+/* ---- Ambient Glow ---- */
+
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-glow::before,
+.ambient-glow::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+}
+
+.ambient-glow::before {
+  top: -20%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: var(--glow-1);
+}
+
+.ambient-glow::after {
+  bottom: -15%;
+  left: -5%;
+  width: 500px;
+  height: 500px;
+  background: var(--glow-2);
+}
+
+/* ---- Utility Classes ---- */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 300ms ease-out both;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    var(--surface-hover) 50%,
+    var(--muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.375rem;
+}
+
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+.card-hover {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stagger-in > :nth-child(1) { animation-delay: 0ms; }
+.stagger-in > :nth-child(2) { animation-delay: 50ms; }
+.stagger-in > :nth-child(3) { animation-delay: 100ms; }
+.stagger-in > :nth-child(4) { animation-delay: 150ms; }
+.stagger-in > :nth-child(5) { animation-delay: 200ms; }
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
+  border-radius: 0.375rem;
 }

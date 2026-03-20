@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { PenLine, MessageCircle } from "lucide-react";
 import EmptyState from "@/components/EmptyState";
 import NoteCard from "@/components/NoteCard";
 import SessionCard from "@/components/SessionCard";
@@ -74,7 +75,7 @@ export default function DashboardPage() {
   if (authLoading || !user) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-12">
-        <p className="text-center text-zinc-500 dark:text-zinc-400">
+        <p className="text-center text-[var(--muted-foreground)]">
           Loading...
         </p>
       </div>
@@ -82,17 +83,18 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+    <div className="fade-in mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <h1 className="mb-8 text-2xl font-bold text-[var(--foreground)]">
         Dashboard
       </h1>
 
       <section className="mb-10">
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[var(--foreground)]">
+          <PenLine size={20} />
           Saved Notes
         </h2>
         {isLoading ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-[var(--muted-foreground)]">
             Loading notes...
           </p>
         ) : notes.length === 0 ? (
@@ -107,7 +109,7 @@ export default function DashboardPage() {
             action={{ label: "Go to home", onClick: () => router.push("/") }}
           />
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="stagger-in grid gap-4 sm:grid-cols-2">
             {notes.map((note) => (
               <NoteCard
                 key={note.id}
@@ -122,12 +124,13 @@ export default function DashboardPage() {
         )}
       </section>
 
-      <section>
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+      <section className="border-t border-[var(--border)] pt-8 mt-8">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[var(--foreground)]">
+          <MessageCircle size={20} />
           Chat History
         </h2>
         {isLoading ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-[var(--muted-foreground)]">
             Loading sessions...
           </p>
         ) : sessions.length === 0 ? (
@@ -142,7 +145,7 @@ export default function DashboardPage() {
             action={{ label: "Go to home", onClick: () => router.push("/") }}
           />
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="stagger-in grid gap-4 sm:grid-cols-2">
             {sessions.map((session) => (
               <SessionCard
                 key={session.id}

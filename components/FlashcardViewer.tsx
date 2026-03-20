@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { Sparkles, ChevronLeft, ChevronRight, Shuffle } from "lucide-react";
 import { fetchFlashcards } from "@/lib/rag-client";
 import type { Flashcard } from "@/types/api";
 import FlashCard from "@/components/FlashCard";
@@ -133,22 +134,32 @@ export default function FlashcardViewer({ videoId, prefetchedFlashcards, languag
           {hasCards && (
             <button
               onClick={shuffle}
-              className="rounded-lg px-3 py-1.5 text-xs font-medium text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
+              className="focus-ring rounded-lg px-3 py-1.5 text-xs font-medium text-[var(--muted-foreground)] transition-colors duration-150 hover:bg-[var(--muted)] hover:text-[var(--foreground)] inline-flex items-center gap-1.5"
               title="Shuffle cards"
+              aria-label="Shuffle cards"
             >
+              <Shuffle size={16} />
               Shuffle
             </button>
           )}
           <button
             onClick={generateFlashcards}
             disabled={state.isLoading}
-            className="rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
+            className="btn-press focus-ring rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5"
           >
-            {state.isLoading
-              ? "Generating..."
-              : hasCards
-                ? "Regenerate"
-                : "Generate"}
+            {state.isLoading ? (
+              "Generating..."
+            ) : hasCards ? (
+              <>
+                <Sparkles size={16} />
+                Regenerate
+              </>
+            ) : (
+              <>
+                <Sparkles size={16} />
+                Generate
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -165,13 +176,13 @@ export default function FlashcardViewer({ videoId, prefetchedFlashcards, languag
       )}
 
       {state.error && !state.isLoading && (
-        <div className="rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
+        <div className="fade-in rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
           <p className="text-sm text-red-700 dark:text-red-400">
             {state.error}
           </p>
           <button
             onClick={generateFlashcards}
-            className="mt-2 text-sm font-medium text-red-600 underline hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+            className="focus-ring mt-2 text-sm font-medium text-red-600 underline transition-colors duration-150 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
           >
             Try again
           </button>
@@ -179,7 +190,7 @@ export default function FlashcardViewer({ videoId, prefetchedFlashcards, languag
       )}
 
       {!hasCards && !state.isLoading && !state.error && (
-        <div className="flex h-56 items-center justify-center">
+        <div className="fade-in flex h-56 items-center justify-center">
           <p className="text-sm text-[var(--muted-foreground)]">
             Click &quot;Generate&quot; to create flashcards from the video
             content.
@@ -188,7 +199,7 @@ export default function FlashcardViewer({ videoId, prefetchedFlashcards, languag
       )}
 
       {hasCards && !state.isLoading && currentCard && (
-        <>
+        <div className="fade-in">
           <FlashCard
             key={state.currentIndex}
             question={currentCard.question}
@@ -201,39 +212,26 @@ export default function FlashcardViewer({ videoId, prefetchedFlashcards, languag
             <button
               onClick={goPrev}
               disabled={state.currentIndex === 0}
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] disabled:opacity-30"
+              className="focus-ring rounded-lg p-2 text-sm font-medium text-[var(--foreground)] transition-colors duration-150 hover:bg-[var(--muted)] disabled:opacity-30"
+              aria-label="Previous card"
             >
-              Previous
+              <ChevronLeft size={20} />
             </button>
 
-            <div className="flex items-center gap-1.5">
-              {state.flashcards.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => goToCard(idx)}
-                  className={`h-2 w-2 rounded-full transition-all ${
-                    idx === state.currentIndex
-                      ? "scale-125 bg-[var(--accent)]"
-                      : "bg-[var(--muted-foreground)]/30 hover:bg-[var(--muted-foreground)]/60"
-                  }`}
-                  aria-label={`Go to card ${idx + 1}`}
-                />
-              ))}
-            </div>
+            <span className="text-sm font-medium text-[var(--muted-foreground)]">
+              {state.currentIndex + 1} of {state.flashcards.length}
+            </span>
 
             <button
               onClick={goNext}
               disabled={state.currentIndex === state.flashcards.length - 1}
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] disabled:opacity-30"
+              className="focus-ring rounded-lg p-2 text-sm font-medium text-[var(--foreground)] transition-colors duration-150 hover:bg-[var(--muted)] disabled:opacity-30"
+              aria-label="Next card"
             >
-              Next
+              <ChevronRight size={20} />
             </button>
           </div>
-
-          <p className="mt-2 text-center text-xs text-[var(--muted-foreground)]">
-            {state.currentIndex + 1} of {state.flashcards.length}
-          </p>
-        </>
+        </div>
       )}
     </div>
   );

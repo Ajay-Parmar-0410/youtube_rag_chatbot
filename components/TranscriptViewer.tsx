@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { Search } from "lucide-react";
 import type { TranscriptSegment } from "@/types/api";
 
 interface TranscriptViewerProps {
@@ -65,7 +66,7 @@ export default function TranscriptViewer({
       return (
         <>
           {text.slice(0, idx)}
-          <mark className="rounded bg-yellow-200 px-0.5 dark:bg-yellow-700/50">
+          <mark className="bg-yellow-400/20 rounded-sm px-0.5">
             {text.slice(idx, idx + searchQuery.length)}
           </mark>
           {text.slice(idx + searchQuery.length)}
@@ -101,30 +102,18 @@ export default function TranscriptViewer({
 
       {/* Search */}
       <div className="relative mb-3">
+        <Search size={16} className="absolute left-2.5 top-2.5 text-[var(--muted-foreground)]" />
         <input
           type="text"
           value={searchQuery}
           onChange={handleSearchChange}
           placeholder="Search transcript..."
-          className="w-full rounded-lg bg-[var(--surface)] px-3 py-2 pl-8 text-sm text-[var(--foreground)] ring-1 ring-[var(--card-border)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          className="focus-ring w-full rounded-lg bg-[var(--surface)] px-3 py-2 pl-8 text-sm text-[var(--foreground)] ring-1 ring-[var(--card-border)] placeholder:text-[var(--muted-foreground)] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
         />
-        <svg
-          className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--muted-foreground)]"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
       </div>
 
       {/* Segments */}
-      <div className="max-h-96 space-y-0.5 overflow-y-auto">
+      <div className="fade-in max-h-96 space-y-0.5 overflow-y-auto">
         {filteredSegments.map((segment, idx) => {
           const isActive =
             !searchQuery.trim() &&
@@ -134,18 +123,14 @@ export default function TranscriptViewer({
             <button
               key={idx}
               onClick={() => handleSegmentClick(segment.start)}
-              className={`flex w-full gap-3 rounded-lg px-2.5 py-2 text-left transition-colors ${
+              className={`focus-ring flex w-full gap-3 px-2.5 py-2 text-left transition-colors duration-150 cursor-pointer ${
                 isActive
-                  ? "bg-[var(--accent)]/10 ring-1 ring-[var(--accent)]/20"
-                  : "hover:bg-[var(--muted)]"
+                  ? "bg-[var(--accent-muted)] ring-1 ring-[var(--accent)]/30 rounded-lg"
+                  : "hover:bg-[var(--surface-hover)] rounded-lg"
               }`}
             >
               <span
-                className={`shrink-0 font-mono text-xs ${
-                  isActive
-                    ? "font-semibold text-[var(--accent)]"
-                    : "text-[var(--muted-foreground)]"
-                }`}
+                className="shrink-0 font-mono text-[var(--accent)] text-xs bg-[var(--accent-muted)] px-2 py-0.5 rounded"
               >
                 {formatTimestamp(segment.start)}
               </span>

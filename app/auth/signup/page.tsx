@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
 import { signUp } from "@/lib/auth";
 
 export default function SignupPage() {
@@ -39,89 +40,103 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="mx-auto mt-20 max-w-sm px-4 text-center">
-        <h1 className="mb-4 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-          Check your email
-        </h1>
-        <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">
-          We sent a confirmation link to <strong>{email}</strong>. Click it to
-          activate your account.
-        </p>
-        <Link
-          href="/auth/login"
-          className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
-        >
-          Back to login
-        </Link>
+      <div className="fade-in mx-auto mt-20 max-w-sm px-4 text-center">
+        <div className="bg-[var(--card)] rounded-xl p-8 ring-1 ring-[var(--card-border)] shadow-lg">
+          <h1 className="mb-4 text-2xl font-bold text-[var(--foreground)]">
+            Check your email
+          </h1>
+          <p className="mb-6 text-sm text-[var(--muted-foreground)]">
+            We sent a confirmation link to <strong>{email}</strong>. Click it to
+            activate your account.
+          </p>
+          <Link
+            href="/auth/login"
+            className="focus-ring text-sm font-medium text-[var(--accent)] transition-colors duration-150 hover:underline"
+          >
+            Back to login
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto mt-20 max-w-sm px-4">
-      <h1 className="mb-6 text-center text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-        Sign up
-      </h1>
+    <div className="fade-in mx-auto mt-20 max-w-sm px-4">
+      <div className="bg-[var(--card)] rounded-xl p-8 ring-1 ring-[var(--card-border)] shadow-lg">
+        {/* Logo */}
+        <div className="mb-6 flex flex-col items-center gap-2">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" className="text-[var(--accent)]">
+            <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
+            <polygon points="10,8.5 16,12 10,15.5" fill="currentColor" />
+          </svg>
+          <span className="text-lg font-bold text-[var(--foreground)]">YouTube RAG</span>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
-            {error}
+        <h1 className="mb-6 text-center text-2xl font-bold text-[var(--foreground)]">
+          Sign up
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="flex items-center gap-2 rounded-md bg-[var(--error)]/10 p-3 text-sm text-[var(--error)]">
+              <AlertTriangle size={16} className="shrink-0" />
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-1 block text-sm font-medium text-[var(--foreground)]"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="focus-ring w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-[var(--input-focus)] focus:ring-2 focus:ring-[var(--accent)]/20"
+              placeholder="you@example.com"
+            />
           </div>
-        )}
 
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-1 block text-sm font-medium text-[var(--foreground)]"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="focus-ring w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-[var(--input-focus)] focus:ring-2 focus:ring-[var(--accent)]/20"
+              placeholder="Min. 8 characters"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-press focus-ring w-full rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            placeholder="you@example.com"
-          />
-        </div>
+            {isSubmitting ? "Creating account..." : "Sign up"}
+          </button>
+        </form>
 
-        <div>
-          <label
-            htmlFor="password"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        <p className="mt-4 text-center text-sm text-[var(--muted-foreground)]">
+          Already have an account?{" "}
+          <Link
+            href="/auth/login"
+            className="focus-ring font-medium text-[var(--accent)] transition-colors duration-150 hover:underline"
           >
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            placeholder="Min. 8 characters"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600"
-        >
-          {isSubmitting ? "Creating account..." : "Sign up"}
-        </button>
-      </form>
-
-      <p className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
-        Already have an account?{" "}
-        <Link
-          href="/auth/login"
-          className="font-medium text-blue-600 hover:underline dark:text-blue-400"
-        >
-          Log in
-        </Link>
-      </p>
+            Log in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -159,14 +159,14 @@ export function usePrefetch(
     }
 
     const timeoutId = setTimeout(() => {
-      controller.abort();
+      controller.abort("prefetch timeout");
     }, TIMEOUTS.prefetch);
 
     runPrefetch();
 
     return () => {
       clearTimeout(timeoutId);
-      controller.abort();
+      controller.abort("cleanup");
     };
   }, [videoId, language, updateStatus]);
 
