@@ -6,12 +6,7 @@ langchain-groq
 langchain-google-genai
 faiss-cpu
 youtube-transcript-api
-yt-dlp
-Pillow
-faster-whisper
 python-dotenv
 pydantic
 pydantic-settings
-pytest
-ruff
 httpx
