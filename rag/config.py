@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     MODEL_NAME: str = "llama-3.3-70b-versatile"
     LIGHTWEIGHT_MODEL: str = "llama-3.1-8b-instant"
     GEMINI_MODEL: str = "gemini-2.5-flash"
-    EMBEDDING_MODEL: str = "models/text-embedding-004"
+    EMBEDDING_MODEL: str = "models/embedding-001"
     CHUNK_SIZE: int = 1000
     CHUNK_OVERLAP: int = 200
     RETRIEVAL_K: int = 4
