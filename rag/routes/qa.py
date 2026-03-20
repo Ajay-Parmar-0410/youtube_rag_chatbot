@@ -36,14 +36,20 @@ async def ask_question(request: QARequest) -> ApiResponse:
         store = await get_or_create_store(request.video_id, transcript_text)
         retriever = get_retriever(store)
 
+        # Convert chat history from {role, content} dicts to (role, content) tuples
+        history = [
+            (msg.get("role", "human"), msg.get("content", ""))
+            for msg in request.chat_history
+        ] if request.chat_history else []
+
         # Try primary model (70b), fall back to lightweight (8b) on rate limit
-        chain = create_qa_chain(retriever, language=request.language)
+        chain = create_qa_chain(retriever, language=request.language, chat_history=history)
         try:
             answer = await chain.ainvoke(request.question)
         except Exception as llm_exc:
             if "rate_limit" in str(llm_exc).lower() or "429" in str(llm_exc):
                 logger.info("70b rate limited, falling back to 8b for %s", request.video_id)
-                chain = create_qa_chain(retriever, language=request.language, lightweight=True)
+                chain = create_qa_chain(retriever, language=request.language, lightweight=True, chat_history=history)
                 answer = await chain.ainvoke(request.question)
             else:
                 raise

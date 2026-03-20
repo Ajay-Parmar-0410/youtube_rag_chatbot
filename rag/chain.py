@@ -56,6 +56,7 @@ def create_qa_chain(
     retriever: VectorStoreRetriever,
     language: str | None = None,
     lightweight: bool = False,
+    chat_history: list[tuple[str, str]] | None = None,
 ) -> Runnable:
     """Create a RAG Q&A chain using LCEL.
 
@@ -64,20 +65,24 @@ def create_qa_chain(
 
     Args:
         lightweight: Use the 8b model (for rate limit fallback).
+        chat_history: List of (role, content) tuples for conversation context.
     """
     llm = _get_groq_llm(lightweight=lightweight)
     prompt = MULTILINGUAL_QA_PROMPT if language else QA_PROMPT
+    history = chat_history or []
 
     if language:
         context_and_question = RunnableParallel(
             context=retriever | format_docs,
             question=RunnablePassthrough(),
             language=lambda _: language,
+            chat_history=lambda _: history,
         )
     else:
         context_and_question = RunnableParallel(
             context=retriever | format_docs,
             question=RunnablePassthrough(),
+            chat_history=lambda _: history,
         )
 
     return context_and_question | prompt | llm | StrOutputParser()

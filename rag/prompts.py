@@ -13,6 +13,7 @@ QA_PROMPT = ChatPromptTemplate.from_messages(
             "If the transcript is in another language, translate your response to English.\n\n"
             "Context:\n{context}",
         ),
+        ("placeholder", "{chat_history}"),
         ("human", "{question}"),
     ]
 )
@@ -28,6 +29,7 @@ MULTILINGUAL_QA_PROMPT = ChatPromptTemplate.from_messages(
             "including timestamps and citations, into {language}.\n\n"
             "Context:\n{context}",
         ),
+        ("placeholder", "{chat_history}"),
         ("human", "{question}"),
     ]
 )
