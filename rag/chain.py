@@ -55,13 +55,17 @@ def format_docs(docs: list[Document]) -> str:
 def create_qa_chain(
     retriever: VectorStoreRetriever,
     language: str | None = None,
+    lightweight: bool = False,
 ) -> Runnable:
     """Create a RAG Q&A chain using LCEL.
 
     Uses Groq for Q&A (small inputs, fast responses).
     When language is specified, responses are in that language.
+
+    Args:
+        lightweight: Use the 8b model (for rate limit fallback).
     """
-    llm = _get_groq_llm()
+    llm = _get_groq_llm(lightweight=lightweight)
     prompt = MULTILINGUAL_QA_PROMPT if language else QA_PROMPT
 
     if language:

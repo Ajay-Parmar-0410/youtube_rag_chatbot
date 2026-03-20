@@ -35,8 +35,19 @@ async def ask_question(request: QARequest) -> ApiResponse:
             transcript_text = transcript.full_text
         store = await get_or_create_store(request.video_id, transcript_text)
         retriever = get_retriever(store)
+
+        # Try primary model (70b), fall back to lightweight (8b) on rate limit
         chain = create_qa_chain(retriever, language=request.language)
-        answer = await chain.ainvoke(request.question)
+        try:
+            answer = await chain.ainvoke(request.question)
+        except Exception as llm_exc:
+            if "rate_limit" in str(llm_exc).lower() or "429" in str(llm_exc):
+                logger.info("70b rate limited, falling back to 8b for %s", request.video_id)
+                chain = create_qa_chain(retriever, language=request.language, lightweight=True)
+                answer = await chain.ainvoke(request.question)
+            else:
+                raise
+
         response = QAResponse(answer=answer)
         return ApiResponse(success=True, data=response.model_dump())
     except TranscriptFetchError as exc:
