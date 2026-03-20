@@ -2,20 +2,21 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.embeddings import Embeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 from config import get_settings
 
 
 @lru_cache(maxsize=1)
-def get_embeddings() -> HuggingFaceEmbeddings:
-    """Return a cached HuggingFaceEmbeddings instance.
+def get_embeddings() -> Embeddings:
+    """Return a cached GoogleGenerativeAIEmbeddings instance.
 
-    Uses BAAI/bge-small-en-v1.5 model by default.
+    Uses Google's text-embedding-004 model via the free Gemini API.
+    Requires GOOGLE_API_KEY environment variable.
     """
     settings = get_settings()
-    return HuggingFaceEmbeddings(
-        model_name=settings.EMBEDDING_MODEL,
-        model_kwargs={"device": "cpu"},
-        encode_kwargs={"normalize_embeddings": True},
+    return GoogleGenerativeAIEmbeddings(
+        model=settings.EMBEDDING_MODEL,
+        google_api_key=settings.GOOGLE_API_KEY,
     )

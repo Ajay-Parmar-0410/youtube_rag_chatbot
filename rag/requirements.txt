@@ -4,7 +4,6 @@ langchain
 langchain-community
 langchain-groq
 langchain-google-genai
-langchain-huggingface
 faiss-cpu
 youtube-transcript-api
 yt-dlp
