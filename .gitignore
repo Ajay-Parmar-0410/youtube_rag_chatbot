@@ -47,8 +47,16 @@ playwright-report/
 dist/
 build/
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Planning/idea docs
+PLAN*.md
+idea*.md
+
+# Build artifacts
+tsconfig.tsbuildinfo
 
 # Misc
 *.log
