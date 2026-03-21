@@ -4,7 +4,6 @@ A web app where you paste a YouTube URL, watch the video inline, and interact wi
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![Python](https://img.shields.io/badge/Python-3.11+-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 ## Features
 
@@ -149,6 +148,3 @@ youtube_rag_chatbot/
 5. For summaries, the full transcript is processed by the LLM
 6. Notes, flashcards, and chat history are saved to Supabase (when logged in)
 
-## License
-
-MIT
