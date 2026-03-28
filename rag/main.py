@@ -13,6 +13,7 @@ from routes.qa import router as qa_router
 from routes.screenshot import router as screenshot_router
 from routes.summary import router as summary_router
 from routes.topics import router as topics_router
+from routes.test_apis import router as test_apis_router
 from routes.transcript import router as transcript_router
 
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +36,7 @@ app.include_router(screenshot_router, prefix="/screenshot", tags=["screenshot"])
 app.include_router(flashcards_router, prefix="/flashcards", tags=["flashcards"])
 app.include_router(topics_router, prefix="/topics", tags=["topics"])
 app.include_router(prefetch_router, prefix="/prefetch", tags=["prefetch"])
+app.include_router(test_apis_router, prefix="/test-apis", tags=["test-apis"])
 
 
 @app.get("/health")
