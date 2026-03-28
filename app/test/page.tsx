@@ -21,11 +21,11 @@ interface TestState {
 }
 
 const TESTS = [
-  { id: "swiggy-basic", label: "Swiggy Homepage", vercelPath: "/api/test-swiggy-basic", railwayPath: "/test-apis/swiggy-basic" },
-  { id: "swiggy-api", label: "Swiggy Restaurant API", vercelPath: "/api/test-swiggy-api", railwayPath: "/test-apis/swiggy-api" },
-  { id: "swiggy-search", label: "Swiggy Search API", vercelPath: "/api/test-swiggy-search", railwayPath: "/test-apis/swiggy-search" },
-  { id: "zomato-basic", label: "Zomato Homepage", vercelPath: "/api/test-zomato-basic", railwayPath: "/test-apis/zomato-basic" },
-  { id: "zomato-api", label: "Zomato Search API", vercelPath: "/api/test-zomato-api", railwayPath: "/test-apis/zomato-api" },
+  { id: "swiggy-basic", label: "Swiggy Homepage" },
+  { id: "swiggy-api", label: "Swiggy Restaurant API" },
+  { id: "swiggy-search", label: "Swiggy Search API" },
+  { id: "zomato-basic", label: "Zomato Homepage" },
+  { id: "zomato-api", label: "Zomato Search API" },
 ] as const;
 
 const INITIAL_STATE: TestState = {
@@ -72,12 +72,6 @@ export default function TestPage() {
   const [results, setResults] = useState<Record<string, TestState>>(
     () => Object.fromEntries(TESTS.map((t) => [t.id, { ...INITIAL_STATE }])),
   );
-  const [railwayUrl, setRailwayUrl] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("test-railway-url") || "";
-    }
-    return "";
-  });
 
   const updateResult = useCallback(
     (testId: string, update: Partial<TestState>) => {
@@ -89,72 +83,48 @@ export default function TestPage() {
     [],
   );
 
-  const runVercelTest = useCallback(
-    async (testId: string, path: string) => {
-      updateResult(testId, { vercelLoading: true, vercel: null });
+  const fetchTest = useCallback(
+    async (testId: string, source: "vercel" | "railway") => {
+      const loadingKey = source === "vercel" ? "vercelLoading" : "railwayLoading";
+      updateResult(testId, { [loadingKey]: true, [source]: null });
+
       try {
+        const path =
+          source === "vercel"
+            ? `/api/test-${testId}`
+            : `/api/test-railway?test=${testId}`;
         const res = await fetch(path);
         const json = await res.json();
-        updateResult(testId, { vercel: json.data, vercelLoading: false });
+        updateResult(testId, { [source]: json.data, [loadingKey]: false });
       } catch (err) {
         updateResult(testId, {
-          vercel: {
+          [source]: {
             test: testId,
             status: 0,
             blocked: true,
             time_ms: 0,
             error: err instanceof Error ? err.message : "Fetch failed",
           },
-          vercelLoading: false,
+          [loadingKey]: false,
         });
       }
     },
     [updateResult],
   );
 
-  const runRailwayTest = useCallback(
-    async (testId: string, path: string) => {
-      if (!railwayUrl) return;
-      updateResult(testId, { railwayLoading: true, railway: null });
-      try {
-        const url = railwayUrl.replace(/\/$/, "") + path;
-        const res = await fetch(url);
-        const json = await res.json();
-        updateResult(testId, { railway: json.data, railwayLoading: false });
-      } catch (err) {
-        updateResult(testId, {
-          railway: {
-            test: testId,
-            status: 0,
-            blocked: true,
-            time_ms: 0,
-            error: err instanceof Error ? err.message : "Fetch failed",
-          },
-          railwayLoading: false,
-        });
-      }
-    },
-    [railwayUrl, updateResult],
-  );
-
   const runSingleTest = useCallback(
-    async (test: (typeof TESTS)[number]) => {
-      const vercelPromise = runVercelTest(test.id, test.vercelPath);
-      const railwayPromise = railwayUrl
-        ? runRailwayTest(test.id, test.railwayPath)
-        : Promise.resolve();
-      await Promise.all([vercelPromise, railwayPromise]);
+    async (testId: string) => {
+      await Promise.all([
+        fetchTest(testId, "vercel"),
+        fetchTest(testId, "railway"),
+      ]);
     },
-    [runVercelTest, runRailwayTest, railwayUrl],
+    [fetchTest],
   );
 
   const runAllTests = useCallback(async () => {
-    await Promise.all(TESTS.map((t) => runSingleTest(t)));
+    await Promise.all(TESTS.map((t) => runSingleTest(t.id)));
   }, [runSingleTest]);
-
-  const saveRailwayUrl = useCallback(() => {
-    localStorage.setItem("test-railway-url", railwayUrl);
-  }, [railwayUrl]);
 
   const anyLoading = Object.values(results).some(
     (r) => r.vercelLoading || r.railwayLoading,
@@ -169,34 +139,6 @@ export default function TestPage() {
         <p className="mt-2 text-sm text-[var(--muted-foreground)]">
           Test if Swiggy and Zomato APIs are accessible from Vercel and Railway servers
         </p>
-      </div>
-
-      {/* Railway URL config */}
-      <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-        <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">
-          Railway Backend URL
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={railwayUrl}
-            onChange={(e) => setRailwayUrl(e.target.value)}
-            onBlur={saveRailwayUrl}
-            placeholder="https://your-app.up.railway.app"
-            className="flex-1 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground-2)] focus:border-[var(--input-focus)] focus:outline-none"
-          />
-          <button
-            onClick={saveRailwayUrl}
-            className="rounded-md bg-[var(--muted)] px-4 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
-          >
-            Save
-          </button>
-        </div>
-        {!railwayUrl && (
-          <p className="mt-1.5 text-xs text-[var(--warning)]">
-            Enter your Railway URL to test from Railway. Vercel tests will work without it.
-          </p>
-        )}
       </div>
 
       {/* Run All button */}
@@ -229,7 +171,7 @@ export default function TestPage() {
                   </span>
                 </div>
                 <button
-                  onClick={() => runSingleTest(test)}
+                  onClick={() => runSingleTest(test.id)}
                   disabled={state.vercelLoading || state.railwayLoading}
                   className="rounded-md bg-[var(--accent-muted)] px-4 py-1.5 text-sm font-medium text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white disabled:opacity-50"
                 >
@@ -249,13 +191,7 @@ export default function TestPage() {
                   <p className="mb-1 text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground-2)]">
                     Railway
                   </p>
-                  {railwayUrl ? (
-                    <StatusBadge result={state.railway} loading={state.railwayLoading} />
-                  ) : (
-                    <span className="text-xs text-[var(--muted-foreground-2)]">
-                      No URL configured
-                    </span>
-                  )}
+                  <StatusBadge result={state.railway} loading={state.railwayLoading} />
                 </div>
               </div>
 

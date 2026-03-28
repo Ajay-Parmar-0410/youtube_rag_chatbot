@@ -54,6 +54,7 @@ CLAUDE.md
 # Planning/idea docs
 PLAN*.md
 idea*.md
+demo.md
 
 # Build artifacts
 tsconfig.tsbuildinfo
