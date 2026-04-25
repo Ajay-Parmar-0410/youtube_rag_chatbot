@@ -1,0 +1,192 @@
+{
+  "chunk_size": 1000,
+  "chunk_overlap": 200,
+  "retrieval_k": 5,
+  "total_queries": 20,
+  "hit_at_1": 0.75,
+  "hit_at_3": 0.9,
+  "hit_at_5": 0.9,
+  "mrr": 0.825,
+  "per_query": [
+    {
+      "video_id": "aircAruvnKk",
+      "question": "What does each neuron in the network hold?",
+      "expected_substring": "a number",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "aircAruvnKk",
+      "question": "How many neurons are in the first layer?",
+      "expected_substring": "784",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "aircAruvnKk",
+      "question": "What is the activation of a neuron?",
+      "expected_substring": "activation",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "aircAruvnKk",
+      "question": "How are layers connected in the network?",
+      "expected_substring": "weight",
+      "rank": 2,
+      "hit_at_1": false,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "aircAruvnKk",
+      "question": "What is the sigmoid function used for?",
+      "expected_substring": "sigmoid",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "IHZwWFHWa-w",
+      "question": "What is the cost function?",
+      "expected_substring": "cost",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "IHZwWFHWa-w",
+      "question": "What does gradient descent minimize?",
+      "expected_substring": "minimum",
+      "rank": 2,
+      "hit_at_1": false,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "IHZwWFHWa-w",
+      "question": "How is the gradient related to the direction of steepest descent?",
+      "expected_substring": "steepest",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "IHZwWFHWa-w",
+      "question": "What are the parameters adjusted during learning?",
+      "expected_substring": "weights and biases",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "IHZwWFHWa-w",
+      "question": "What happens if the cost function lands in a local minimum?",
+      "expected_substring": "local minimum",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "kCc8FmEb1nY",
+      "question": "What tokenizer does the implementation use?",
+      "expected_substring": "character",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "kCc8FmEb1nY",
+      "question": "What dataset is used for training the mini GPT?",
+      "expected_substring": "shakespeare",
+      "rank": 2,
+      "hit_at_1": false,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "kCc8FmEb1nY",
+      "question": "What is self-attention?",
+      "expected_substring": "attention",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "kCc8FmEb1nY",
+      "question": "What are query, key and value vectors?",
+      "expected_substring": "query",
+      "rank": null,
+      "hit_at_1": false,
+      "hit_at_3": false,
+      "hit_at_5": false
+    },
+    {
+      "video_id": "kCc8FmEb1nY",
+      "question": "Why do we scale the dot products in attention?",
+      "expected_substring": "scale",
+      "rank": null,
+      "hit_at_1": false,
+      "hit_at_3": false,
+      "hit_at_5": false
+    },
+    {
+      "video_id": "LPZh9BOjkQs",
+      "question": "How long would it take a human to read GPT-3's training data?",
+      "expected_substring": "2600 years",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "LPZh9BOjkQs",
+      "question": "What are the parameters of a language model?",
+      "expected_substring": "parameters or weights",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "LPZh9BOjkQs",
+      "question": "What algorithm is used to tweak the model's parameters during training?",
+      "expected_substring": "backpropagation",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "LPZh9BOjkQs",
+      "question": "What extra training step turns a pre-trained model into a helpful assistant?",
+      "expected_substring": "reinforcement learning",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "video_id": "LPZh9BOjkQs",
+      "question": "What special operation makes transformers unique?",
+      "expected_substring": "attention",
+      "rank": 1,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    }
+  ]
+}
