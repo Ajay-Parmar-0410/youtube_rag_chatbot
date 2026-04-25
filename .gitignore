@@ -47,13 +47,14 @@ playwright-report/
 dist/
 build/
 
-# Claude Code
+# Editor / agent metadata
 .claude/
-CLAUDE.md
 
-# Planning/idea docs
+# Planning / scratch docs
 PLAN*.md
 idea*.md
+demo.md
+notes.md
 
 # Build artifacts
 tsconfig.tsbuildinfo
@@ -61,6 +62,3 @@ tsconfig.tsbuildinfo
 # Misc
 *.log
 npm-debug.log*
-
-# Reference clone (not project code)
-everything-claude-code/
